@@ -3,7 +3,7 @@
 **Gxsm4 See also: gxsm.sf.net**
 
 This is port of Gxsm3 (gtk3) to gtk4. There are still minor gtk4 related issues and shortcomings at this time
-and this version is for evaluation and future migration readyness.
+and this version is for evaluation and future migration readiness.
 See details of pending and know issues in section 3.
 (C) PyZahl 2025-04-07
 
@@ -38,7 +38,7 @@ and run ldconfig.
 Install
 apt-get install dconf-editor
 
-Disable /org/gnome/gxsm4 Splash if running Wayland! (Splan window can not be positioned/displayed and freezes gxsm4 at start)
+Disable /org/gnome/gxsm4 Splash if running Wayland! (Splash window can not be positioned/displayed and freezes gxsm4 at start)
 
 ```
 WaylandEnable=false
@@ -64,25 +64,25 @@ To uninstall call in the buildir
 ninja uninstall
 ```
 
-## (NOT RECOMENEDED ANY MORE AS GTK4 BECOMES MAIN STREAM) b) New package tool: Flatpak -- work in progress:
+## b) Building and running inside a Docker container with WSL2
 
-Install flatpak and flathub
+This assumes that WSL2 is set up on the user's computer and the commands are run on the WSL2 terminal
+Presumably, VS Code is the code editor, though this is not necessary
+
+In the project root folder with the `Dockerfile`, run
 ``` 
- $ sudo apt install flatpak flatpak-builder -y
- $ sudo flatpak remote-add --if-not-exists flathub https://flathub.org/repo/flathub.flatpakrepo
+ $ docker build -t <container_name>
+ $ docker run -it --rm  -v /tmp/.X11-unix:/tmp/.X11-unix -e DISPLAY=$DISPLAY <container_name>
 ```
-Install the gnome sdk within your flatpak enviroment:
+and GXSM main UI should pop up.
+
+One can pass additional command line arguments as well by appending to the end of line
+For example, to signal no hardware, do
 ``` 
- $ flatpak install flathub org.gnome.Sdk//41 org.gnome.Platform//41
+ $ docker build -t <container_name>
+ $ docker run -it --rm  -v /tmp/.X11-unix:/tmp/.X11-unix -e DISPLAY=$DISPLAY <container_name> -h no
 ```
 
-Now install and run GXSM4 (assuming that the json-file/source is in the folder gxsm4-git
-``` 
- $ mkdir flatpak_builddir
- $ flatpak-builder --user --install --force-clean flatpak_builddir gxsm4-git/org.gnome.gxsm4.json
- $ flatpak run org.gnome.Gxsm4
-```
- 
 ## 3. To-Do-List
 
 - Testing testing testing
@@ -97,13 +97,13 @@ Now install and run GXSM4 (assuming that the json-file/source is in the folder g
 
 - All ENTRIES: added configuration menu option not yet attached and not accessible. Need to figure out how to add a custom menu entry to gtk_popovers.
              It is possible to manually edit the properties via the dconf-editor to get started.
-	     Some thing seams slow here at build and update, or has post idel latency.
+	     Some thing seams slow here at build and update, or has post idle latency.
 
 - known GTK4 shortcomings so far noted: 
-  - Rendering in cairo fall back mode (when using X11 export via ssh -X for example) is very slow -- some where around a magnitude (10x) slow! What makes remote work nearly impossible. However, varies a lot by "fetaure" used. Menu pop ups are very slow, take long to appear. GUI initial  build (many entries, etc.) takes a long time.
-  - press/release signals not available for simple button widget. Work around assigning handlers does not work as expected. Work for a canvas "home made" button. Non perfec tbu tworkable workaround currently used: Arrow icons on button widget accept press and release events. (Needed for Mover Controls: "fire wave signal on DSP when pressed" direction buttons.
+  - Rendering in cairo fall back mode (when using X11 export via ssh -X for example) is very slow -- some where around a magnitude (10x) slow! What makes remote work nearly impossible. However, varies a lot by "feature" used. Menu pop ups are very slow, take long to appear. GUI initial  build (many entries, etc.) takes a long time.
+  - press/release signals not available for simple button widget. Work around assigning handlers does not work as expected. Work for a canvas "home made" button. Non perfect but workable workaround currently used: Arrow icons on button widget accept press and release events. (Needed for Mover Controls: "fire wave signal on DSP when pressed" direction buttons.
 
-- Pending back/forward sync or porting from gxsm3: idle callbacks for Tip Move and related vs. blocking or singel shot. Address pending minor random but rare move issue with initiating a scan.
+- Pending back/forward sync or porting from gxsm3: idle callbacks for Tip Move and related vs. blocking or single shot. Address pending minor random but rare move issue with initiating a scan.
 - Pending odd behavior for object move/edit in some situations. (Workaround: remove all, start over)
 - Pending: some hot keys are non functional
 
@@ -122,10 +122,10 @@ Then start gxsm4 again.
 ## FYI:
 ----
 I disabled warning messages in configure.ac (CFLAG -w) to not get flooded by a silly issue I cannot fix and added -fpermissive.
-This is needed as I get an error by the C++ compiler per default now when I xor  GTK_FLAGS  like A | B ... as this foces a typ conversion to int...
+This is needed as I get an error by the C++ compiler per default now when I xor  GTK_FLAGS  like A | B ... as this forces a typ conversion to int...
 Oh well some crap.
 
-much more ... to be figured out ans tested ....
+much more ... to be figured out and tested ....
 
 
 ## 4. How to report bugs

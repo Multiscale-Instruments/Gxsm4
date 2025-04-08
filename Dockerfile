@@ -6,7 +6,8 @@ RUN apt-get install -y libnetcdf-c++4-dev ncview libnetcdf-dev libnetcdf-cxx-leg
 RUN apt-get install -y libfftw3-dev libgsl-dev libgtksourceview-5-dev python3-dev libpython3-all-dev python3-numpy
 RUN apt-get install -y libquicktime-dev
 RUN apt-get update && DEBIAN_FRONTEND=noninteractive apt-get install -y libopencv-dev 
-RUN apt-get install desktop-file-utils
+RUN apt-get install -y desktop-file-utils
+RUN apt-get install -y dbus-x11
 
 ENV LD_LIBRARY_PATH=/usr/local/lib/x86_64-linux-gnu
 RUN ldconfig
@@ -19,7 +20,11 @@ COPY . .
 # This command compiles your app using meson
 RUN meson builddir
 RUN cd builddir && ninja install
+
+# Disable gxsm splash screen
+RUN gsettings set org.gnome.gxsm4 splash false
+
 # This command runs your application, comment out this line to compile only
-CMD ["gxsm"]
+ENTRYPOINT ["/usr/local/bin/gxsm4"]
 
 LABEL Name=gxsm4 Version=0.0.1
